@@ -2,6 +2,8 @@
 
 **AutoPromptX** is a research prototype that demonstrates how large language models (LLMs) can automatically optimize user prompts to produce clearer, more accurate, and more useful responses. The project was developed for the AgentX LLM Agents MOOC Competition (Research Track) hosted by Berkeley RDI.
 
+Demo: https://promptx-9s3niftkpzbehuxfi5begt.streamlit.app/
+
 ---
 
 ## Overview
