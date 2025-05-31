@@ -1,9 +1,13 @@
 import streamlit as st
-import openai
+from openai import OpenAI
 import difflib
 import textstat
+import os
+from dotenv import load_dotenv
 
-openai.api_key = "sk-..."
+load_dotenv()  
+api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=api_key)
 
 st.set_page_config(page_title="AutoPromptX: Interactive Prompt Optimizer", layout="wide")
 st.title("AutoPromptX: Interactive Prompt Optimizer")
@@ -21,12 +25,12 @@ def get_gpt_response(prompt, system_prompt=None, model="gpt-4o"):
     if system_prompt:
         messages.append({"role": "system", "content": system_prompt})
     messages.append({"role": "user", "content": prompt})
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model=model,
         messages=messages,
         temperature=0.5,
     )
-    return response['choices'][0]['message']['content'].strip()
+    return response.choices[0].message.content.strip()
 
 def prompt_self_critique_and_rewrite(prompt, response):
     critique_instruction = f"""
@@ -43,7 +47,6 @@ LLM Response:
 {response}
 """
     output = get_gpt_response(critique_instruction)
-    # Extract the improved prompt and critique
     critique = ""
     improved_prompt = ""
     if "IMPROVED_PROMPT:" in output:
@@ -99,7 +102,6 @@ if st.button("Optimize Prompt and Analyze"):
     st.subheader("Step 3: Optimized LLM Response")
     st.write(optimized_response)
 
-    # Comparison 
     st.subheader("Step 4: Comparative Analysis")
 
     col1, col2 = st.columns(2)
@@ -119,7 +121,6 @@ if st.button("Optimize Prompt and Analyze"):
         st.markdown("**Metrics:**")
         st.json(metrics_opt)
 
-    # Metrics
     st.subheader("Step 5: Improvement Summary")
     st.markdown(
         f"""
@@ -133,4 +134,3 @@ if st.button("Optimize Prompt and Analyze"):
 
 st.markdown("---")
 st.caption("AutoPromptX: LLM Agent for Automated Prompt Optimization. Research prototype for AgentX MOOC Competition.")
-
